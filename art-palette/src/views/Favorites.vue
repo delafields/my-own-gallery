@@ -1,7 +1,7 @@
 <template>
   <div id="wrapper">
     <div id="palette-wrapper" style="border-bottom: 4px solid white;">
-      <div v-for="hex in currentPaletteHex" 
+      <div v-for="hex in currentImageHex" 
           :key="hex" 
           class="palette"
           v-bind:style="{ backgroundColor: hex }"/>
@@ -18,81 +18,68 @@
       <div style="display: flex; flex-direction: row;">
         <button v-on:click="previousImage()">Previous</button>
         <button v-on:click="nextImage()">Next</button>
-        <button v-on:click="newPalette()">New Palette</button>
         <button v-on:click="likeImage()" v-if="!(currentImageTitle in likedImages)">
           Like
         </button>
         <button v-on:click="likeImage()" v-else>Unlike</button>
+        <button><router-link to="/">Home</router-link></button>
       </div>
     </div>
     <div id="palette-wrapper" style="border-top: 4px solid white;">
-      <div v-for="hex in currentPaletteHex" 
+      <div v-for="hex in currentImageHex" 
           :key="hex" 
           class="palette"
           v-bind:style="{ backgroundColor: hex }"/>
     </div>
-    <!-- {{likedImages}} -->
   </div>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
-import imageJson from '../assets/image_links.json'
-
 export default {
-  name: 'UltimateGallery',
+  name: 'Gallery',
   data() {
     return {
-      images: JSON.parse(JSON.stringify(imageJson)),
-      currentPaletteObject: "",
-      currentPaletteHex: "",
-      currentPaletteImages: "",
-      currentImageIndex: 0,
-      likedImages: {}
+      likedImages: JSON.parse(localStorage.likedImages),
+      currentImageTitle: "",
+      currentImageIdx: 0
     }
   },
   computed: {
     currentImageSrc() {
-      return this.currentPaletteImages[this.currentImageIndex]["link"]
+      return this.likedImages[this.currentImageTitle]["link"]
     },
-    currentImageTitle() {
-      return this.currentPaletteImages[this.currentImageIndex]["title"]
+    currentImageHex() {
+      return this.likedImages[this.currentImageTitle]["hex_codes"]
     }
   },
   created() {
-    const random_idx = Math.floor(Math.random() * Object.keys(this.images).length)
-    this.currentPaletteObject = this.images[Object.keys(this.images)[random_idx]]
-    this.currentPaletteHex = this.currentPaletteObject["palette_hex_codes"]
-    this.currentPaletteImages = Object.values(this.currentPaletteObject["images"])
-
-    if (localStorage.likedImages) {
-      this.likedImages = JSON.parse(localStorage.likedImages);
-    }
+    // MUST FIGURE OUT HOW TO SHUFFLE OBJECT!!
+    
+    const random_idx = Math.floor(Math.random() * Object.keys(this.likedImages).length)
+    this.currentImageTitle = Object.keys(this.likedImages)[random_idx];
+    this.currentImageIdx = random_idx;
   },
   methods: {
     previousImage: function() {
-      this.currentImageIndex = this.currentImageIndex === 0 ? this.currentPaletteImages.length - 1 : this.currentImageIndex -= 1;
+      if (this.currentImageIdx === 0) {
+        this.currentImageIdx = Object.keys(this.likedImages).length - 1;
+        this.currentImageTitle = Object.keys(this.likedImages)[this.currentImageIdx]
+      }
+      else {
+        this.currentImageIdx--;
+        this.currentImageTitle = Object.keys(this.likedImages)[this.currentImageIdx]
+      }
     },
     nextImage: function() {
-      this.currentImageIndex = this.currentImageIndex === this.currentPaletteImages.length - 1 ? this.currentImageIndex = 0 : this.currentImageIndex += 1;
-    },
-    newPalette: function() {
-      const random_idx = Math.floor(Math.random() * Object.keys(this.images).length)
-      this.currentImageIndex = 0;
-      this.currentPaletteObject = this.images[Object.keys(this.images)[random_idx]]
-      this.currentPaletteHex = this.currentPaletteObject["palette_hex_codes"]
-      this.currentPaletteImages = Object.values(this.currentPaletteObject["images"])
-    },
-    likeImage: function() {
-      const imageDict = {"link": this.currentImageSrc, "hex_codes": this.currentPaletteHex};
-      if (this.currentImageTitle in this.likedImages){
-        delete this.likedImages[this.currentImageTitle]
-      } 
-      else {
-        this.likedImages[this.currentImageTitle] = imageDict;
+      // this.currentImageIndex = this.currentImageIndex === this.currentPaletteImages.length - 1 ? this.currentImageIndex = 0 : this.currentImageIndex += 1;
+      if (this.currentImageIdx === Object.keys(this.likedImages).length - 1) {
+        this.currentImageIdx = 0;
+        this.currentImageTitle = Object.keys(this.likedImages)[this.currentImageIdx]
       }
-
-      localStorage.likedImages = JSON.stringify(this.likedImages)
+      else {
+        this.currentImageIdx++;
+        this.currentImageTitle = Object.keys(this.likedImages)[this.currentImageIdx]
+      }
     }
   }
 }

@@ -7,30 +7,23 @@
           v-bind:style="{ backgroundColor: hex }"/>
     </div>
     <div id="image-wrapper">
-      <transition name="slide-fade" mode="out-in">
-        <figure :key="currentPaletteImages[currentImageIndex]['link']">
-          <img v-bind:src="currentPaletteImages[currentImageIndex]['link']" 
-              id="image"/>
-          <figcaption 
-            v-if="currentPaletteImages[currentImageIndex]['title'] in likedImages"
-            id="image-name">
-            {{ currentPaletteImages[currentImageIndex]['title'] }} ❤️
-          </figcaption>
-          <figcaption 
-            v-else
-            id="image-name">
-            {{ currentPaletteImages[currentImageIndex]['title'] }}
-          </figcaption>
+      <h2 class="heart" id="leftHeart" v-if="currentImageTitle in likedImages">❤️</h2>
+      <h2 class="heart" id="rightHeart" v-if="currentImageTitle in likedImages">❤️</h2>
+      <transition name="fade" mode="out-in">
+        <figure :key="currentImageSrc">
+          <img v-bind:src="currentImageSrc" id="image"/>
+          <figcaption id="image-name">{{ currentImageTitle }}</figcaption>
         </figure>
       </transition>
       <div style="display: flex; flex-direction: row;">
         <button v-on:click="previousImage()">Previous</button>
         <button v-on:click="nextImage()">Next</button>
         <button v-on:click="newPalette()">New Palette</button>
-        <button v-on:click="likeImage()" v-if="!(currentPaletteImages[currentImageIndex]['title'] in likedImages)">
+        <button v-on:click="likeImage()" v-if="!(currentImageTitle in likedImages)">
           Like
         </button>
         <button v-on:click="likeImage()" v-else>Unlike</button>
+        <button><router-link to="/favorites">Favorites</router-link></button>
       </div>
     </div>
     <div id="palette-wrapper" style="border-top: 4px solid white;">
@@ -39,31 +32,38 @@
           class="palette"
           v-bind:style="{ backgroundColor: hex }"/>
     </div>
-    {{likedImages}}
+    <!-- {{likedImages}} -->
   </div>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
 import imageJson from '../assets/image_links.json'
 
 export default {
-  name: 'GalleryDouble',
+  name: 'Gallery',
   data() {
     return {
       images: JSON.parse(JSON.stringify(imageJson)),
-      currentPaletteKey: "",
+      currentPaletteObject: "",
       currentPaletteHex: "",
       currentPaletteImages: "",
       currentImageIndex: 0,
       likedImages: {}
     }
   },
+  computed: {
+    currentImageSrc() {
+      return this.currentPaletteImages[this.currentImageIndex]["link"]
+    },
+    currentImageTitle() {
+      return this.currentPaletteImages[this.currentImageIndex]["title"]
+    }
+  },
   created() {
-    const idx = Math.floor(Math.random() * Object.keys(this.images).length)
-    this.currentPaletteKey = Object.keys(this.images)[idx]
-    this.currentPaletteHex = this.images[this.currentPaletteKey]["palette_hex_codes"]
-    this.currentPaletteImages = Object.values(this.images[this.currentPaletteKey]["images"])
+    const random_idx = Math.floor(Math.random() * Object.keys(this.images).length)
+    this.currentPaletteObject = this.images[Object.keys(this.images)[random_idx]]
+    this.currentPaletteHex = this.currentPaletteObject["palette_hex_codes"]
+    this.currentPaletteImages = Object.values(this.currentPaletteObject["images"])
 
     if (localStorage.likedImages) {
       this.likedImages = JSON.parse(localStorage.likedImages);
@@ -77,22 +77,19 @@ export default {
       this.currentImageIndex = this.currentImageIndex === this.currentPaletteImages.length - 1 ? this.currentImageIndex = 0 : this.currentImageIndex += 1;
     },
     newPalette: function() {
-      const idx = Math.floor(Math.random() * Object.keys(this.images).length)
+      const random_idx = Math.floor(Math.random() * Object.keys(this.images).length)
       this.currentImageIndex = 0;
-      this.currentPaletteKey = Object.keys(this.images)[idx]
-      this.currentPaletteHex = this.images[this.currentPaletteKey]["palette_hex_codes"]
-      this.currentPaletteImages = Object.values(this.images[this.currentPaletteKey]["images"])
+      this.currentPaletteObject = this.images[Object.keys(this.images)[random_idx]]
+      this.currentPaletteHex = this.currentPaletteObject["palette_hex_codes"]
+      this.currentPaletteImages = Object.values(this.currentPaletteObject["images"])
     },
     likeImage: function() {
-      // if in likedImages, remove
-      const currentImageLink = this.currentPaletteImages[this.currentImageIndex]['link'];
-      const currentImageTitle = this.currentPaletteImages[this.currentImageIndex]['title']
-      const imageDict = {"link": currentImageLink, "hex_codes": this.currentPaletteHex};
-      if (currentImageTitle in this.likedImages){
-        delete this.likedImages[currentImageTitle]
+      const imageDict = {"link": this.currentImageSrc, "hex_codes": this.currentPaletteHex};
+      if (this.currentImageTitle in this.likedImages){
+        delete this.likedImages[this.currentImageTitle]
       } 
       else {
-        this.likedImages[currentImageTitle] = imageDict;
+        this.likedImages[this.currentImageTitle] = imageDict;
       }
 
       localStorage.likedImages = JSON.stringify(this.likedImages)
@@ -102,25 +99,11 @@ export default {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English&display=swap');
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.8s ease-out;
+}
 
-/* fade images: https://forum.vuejs.org/t/how-to-add-animation-for-image-src-change/4720 */
-/* .fade-enter-active, .fade-leave-active {
-  transition: opacity .3s;
-}
-.fade-enter, .fade-leave-to  {
-  opacity: 0;
-} */
-/* prefix with transition name */
-.slide-fade-enter-active {
-  transition: all 2s ease;
-}
-.slide-fade-leave-active {
-  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
-  /* transform: translateY(30px); */
+.fade-enter, .fade-leave-to {
   opacity: 0;
 }
 
@@ -175,6 +158,21 @@ export default {
   text-align: center;
   font-size: 1.5rem;
   
+}
+
+.heart {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  z-index: 10;
+}
+
+#leftHeart {
+  left: 10%;
+}
+#rightHeart {
+  right: 10%;
 }
 
 h1 {

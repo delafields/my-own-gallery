@@ -1,4 +1,4 @@
-# gallery
+# art-palette
 
 ## Project setup
 ```
