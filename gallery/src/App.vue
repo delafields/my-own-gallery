@@ -1,14 +1,14 @@
 <template>
-  <GalleryDouble/>
+  <UltimateGallery/>
 </template>
 
 <script>
-import GalleryDouble from './components/GalleryDouble.vue'
+import UltimateGallery from './components/UltimateGallery.vue'
 
 export default {
   name: 'App',
   components: {
-    GalleryDouble
+    UltimateGallery
   }
 }
 </script>
