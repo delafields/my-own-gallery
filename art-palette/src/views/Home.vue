@@ -99,8 +99,9 @@ export default {
 </script>
 
 <style>
+
 .fade-enter-active, .fade-leave-active {
-  transition: opacity 0.8s ease-out;
+  transition: opacity 0.5s ease-out;
 }
 
 .fade-enter, .fade-leave-to {

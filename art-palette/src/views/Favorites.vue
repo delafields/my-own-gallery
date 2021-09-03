@@ -7,8 +7,6 @@
           v-bind:style="{ backgroundColor: hex }"/>
     </div>
     <div id="image-wrapper">
-      <h2 class="heart" id="leftHeart" v-if="currentImageTitle in likedImages">❤️</h2>
-      <h2 class="heart" id="rightHeart" v-if="currentImageTitle in likedImages">❤️</h2>
       <transition name="fade" mode="out-in">
         <figure :key="currentImageSrc">
           <img v-bind:src="currentImageSrc" id="image"/>
@@ -145,21 +143,6 @@ export default {
   text-align: center;
   font-size: 1.5rem;
   
-}
-
-.heart {
-  position: absolute;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  z-index: 10;
-}
-
-#leftHeart {
-  left: 10%;
-}
-#rightHeart {
-  right: 10%;
 }
 
 h1 {
