@@ -1,1 +1,5 @@
 chromedriver.exe
+
+dev scrape.ipynb
+
+image_links_*.json
