@@ -14,3 +14,16 @@ All images and palettes sourced from Google Arts & Culture's awesome [Art Palett
 Details:
 * Front-end: Vue.js
 * Scraping: Python (Selenium, BeautifulSoup)
+
+
+TODO
+- Create front end
+  - should randomly generate an initial 5 color palette
+  - this populates the palette bar
+- Create api route that takes palette and uses pupeteer to fetch images
+  - update state with new images and display first
+  - add next and last image functionality
+- add color pickers
+  - these should call the same api route as the last step
+- add image deletion functionality to pickers
+  - make sure api route + state work with this
