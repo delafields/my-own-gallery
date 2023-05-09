@@ -17,13 +17,20 @@ Details:
 
 
 TODO
-- Create front end
-  - should randomly generate an initial 5 color palette
-  - this populates the palette bar
 - Create api route that takes palette and uses pupeteer to fetch images
   - update state with new images and display first
   - add next and last image functionality
+  - if this doesn't work just use scraped images
+- Create front end
+  - should randomly generate an initial 5 color palette
+  - this populates the palette bar
 - add color pickers
   - these should call the same api route as the last step
 - add image deletion functionality to pickers
   - make sure api route + state work with this
+
+how to use pupeteer in a next api route
+- debugging discussion: https://github.com/orgs/vercel/discussions/124
+- vercel's specific example: https://github.com/vercel/virtual-event-starter-kit/blob/main/lib/screenshot.ts
+  - vercel node version and chrome-aws-lambda/pupeteer core versions matter
+- guide off of more issues from the approach above
