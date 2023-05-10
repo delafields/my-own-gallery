@@ -6,19 +6,51 @@ import React, { useState, useEffect } from "react";
 
 
 export default function Home() {
-  const [palette, setPalette] = useState(null);
+  const [images, setImages] = useState(null);
+  const [color1, setColor1] = useState(generateHexCode());
+  const [color2, setColor2] = useState(generateHexCode());
+  const [color3, setColor3] = useState(generateHexCode());
+  const [color4, setColor4] = useState(generateHexCode());
+  const [color5, setColor5] = useState(null);
+
+  function generateHexCode() {
+    const hexChars = '0123456789ABCDEF';
+    let hex = '';
+  
+    // Generate a random 6-digit hex code
+    for (let i = 0; i < 6; i++) {
+      hex += hexChars[Math.floor(Math.random() * 16)];
+    }
+  
+    return hex.toLowerCase();
+  }
+  
+  // function generateRandomPalette() {
+  //   const hexCodes = [];
+  
+  //   // Generate 6 random hex codes
+  //   for (let i = 0; i < 5; i++) {
+  //     hexCodes.push(generateHexCode());
+  //   }
+  
+  //   // Join the hex codes with a dash
+  //   return hexCodes.join('-').toLowerCase();
+  // }
 
   useEffect(() => {
     async function fetchPalette() {
-      const res = await fetch("/api/palette");
+      // const res = await fetch("/api/palette?hex=374121-5d4538-477e92-c0b69e-163a60");
+      const res = await fetch(`/api/palette?hex=${color1}-${color2}-${color3}-${color4}-${color5}`);
       const data = await res.json();
-      setPalette(data);
+      console.log(data)
+      setImages(data);
     }
 
     fetchPalette();
   }, []);
 
-  console.log(palette)
+  
+
   
   return (
     <>
