@@ -2,9 +2,24 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '@/styles/Home.module.css'
 // import fetchPalette from './api/palette'
+import React, { useState, useEffect } from "react";
 
 
 export default function Home() {
+  const [palette, setPalette] = useState(null);
+
+  useEffect(() => {
+    async function fetchPalette() {
+      const res = await fetch("/api/palette");
+      const data = await res.json();
+      setPalette(data);
+    }
+
+    fetchPalette();
+  }, []);
+
+  console.log(palette)
+  
   return (
     <>
       <Head>

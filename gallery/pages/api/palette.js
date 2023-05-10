@@ -2,9 +2,12 @@ import edgeChromium from 'chrome-aws-lambda'
 
 // Importing Puppeteer core as default otherwise
 // it won't function correctly with "launch()"
-import puppeteer from 'puppeteer-core'
+import puppeteer, { errors } from 'puppeteer-core'
 
 export default async function fetchPalette (req, res) {
+    // how to handle arguments
+    // https://www.slingacademy.com/article/next-js-api-routes-how-to-get-parameters-query-string/
+
     const options = process.env.AWS_REGION
     ? {
         args: chrome.args,
@@ -29,19 +32,6 @@ export default async function fetchPalette (req, res) {
 
     await page.goto(url, { waitUntil: 'networkidle0' });
 
-    // await page.goto(url, {waitForSelector: '.result-item .loaded'})
-
-    // const html = await page.content();
-    // console.log(html);
-
-    // let images = await page.evaluate(() => {
-        // const srcs = Array.from(
-        //     document.querySelectorAll("div.item-image > img")
-        // ).map((image) => image.getAttribute("src"));
-        // return srcs;
-    // })
-
-
     // scrape images
     const els = await page.$$('div.result-item');
 
@@ -55,7 +45,8 @@ export default async function fetchPalette (req, res) {
 
         images.push({"title": title, "url": url})
     }
-
-    console.log(images)
-    return images
-  }
+    
+    // console.log(images)
+    // return res.status(200).json({ images });
+    return res.status(200).json( images );
+}
