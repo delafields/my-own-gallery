@@ -56,7 +56,7 @@ export default async function fetchPalette (req, res) {
     // https://www.slingacademy.com/article/next-js-api-routes-how-to-get-parameters-query-string/
     let { hex } = req.query
     // will replace all null hexcodes
-    hex = hex.replace('-null', '')
+    hex = hex.replaceAll('-null', '')
 
     const options = process.env.AWS_REGION
     ? {
