@@ -1,3 +1,9 @@
+.customlayout .react-colorful__saturation {
+  border-radius: none;
+  width: auto;
+  height: 150px;
+}
+
 .main {
   display: flex;
   flex-direction: column;

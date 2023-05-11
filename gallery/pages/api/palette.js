@@ -56,7 +56,7 @@ export default async function fetchPalette (req, res) {
     // https://www.slingacademy.com/article/next-js-api-routes-how-to-get-parameters-query-string/
     let { hex } = req.query
     // will replace all null hexcodes
-    hex = hex.replaceAll('-null', '')
+    hex = hex.replaceAll('-undefined', '').replaceAll('-null', '')
 
     const options = process.env.AWS_REGION
     ? {
@@ -88,7 +88,9 @@ export default async function fetchPalette (req, res) {
     const images = [];
 
     for (let i = 0; i < els.length; i++) {
-        const url = await els[i].$eval('div.item-image > img', i => i.getAttribute('src'));
+        let url = await els[i].$eval('div.item-image > img', i => i.getAttribute('src'));
+        // grab a larger version of the image
+            url = url.replace(/=w(\d)+/, '=w1000')
         // console.log(img);
         const title = await els[i].$eval('a.more-details', a => a.getAttribute('title'));
         // console.log(link);
