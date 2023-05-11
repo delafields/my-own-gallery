@@ -5,25 +5,35 @@ import React, { useState, useEffect } from "react";
 import { HexColorPicker } from "react-colorful";
 // import ColorPicker from '../components/ColorPicker';
 
-const ColorPicker = ({ color, onChange }) => {
+const ColorPicker = ({ index, color, onColorChange }) => {
   const [showPicker, setShowPicker] = useState(false);
 
   const handleColorChange = (newColor) => {
-    onChange(newColor);
+    onColorChange(index, newColor);
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-1/5">
       <div
-        className="w-1/5 bg-gray-300 cursor-pointer hover:bg-gray-400"
+        className="relative h-[150px] bg-gray-300 cursor-pointer"
         style={{ backgroundColor: color }}
         onMouseEnter={() => setShowPicker(true)}
         onMouseLeave={() => setShowPicker(false)}
       >
-        yo
         {(showPicker && color) && (
-          <div className="absolute left-0 z-10 top-full">
-            <HexColorPicker color={color} onChange={handleColorChange} />
+          <div className="absolute z-10 w-full">
+            {/* <div style={{ position: 'absolute', top: '100%', left: 0 }}> */}
+            {index != 0 ? (
+              <button 
+              className='absolute w-full -translate-y-6 align-center'
+              onClick={() => handleColorChange(null)}
+              >delete</button>
+            ) : null}
+              <HexColorPicker 
+                style={{width: 'auto', height: '150px'}}
+                // className='absolute z-10'
+                color={color} onChange={handleColorChange} />
+            {/* </div> */}
           </div>
         )}
       </div>
@@ -32,13 +42,69 @@ const ColorPicker = ({ color, onChange }) => {
 };
 
 
+const ImageCarousel = ({ images }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const prevImageIndex = currentImageIndex === 0 ? images.length - 1 : currentImageIndex - 1;
+  const nextImageIndex = currentImageIndex === images.length - 1 ? 0 : currentImageIndex + 1;
+
+  const handlePrevClick = () => {
+    setCurrentImageIndex(prevImageIndex);
+  };
+
+  const handleNextClick = () => {
+    setCurrentImageIndex(nextImageIndex);
+  };
+
+  return (
+    <div className="relative w-full h-full">
+      <div className="relative flex items-center justify-center w-full h-full">
+        {/* <Image
+          src={images[currentImageIndex].url}
+          alt="image"
+          layout='fill'
+          objectFit='contain'
+          // className="transition-opacity duration-500"
+          className={`transition-opacity duration-500 ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
+        /> */}
+        {images.map((image, index) => (
+          <Image
+            key={index}
+            src={image.url}
+            alt="image"
+            layout="fill"
+            objectFit="contain"
+            className={`absolute top-0 left-0 transition-opacity duration-500 ${
+              index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        ))}
+      </div>
+      <div className="absolute top-0 left-0 flex items-center justify-between w-full h-full">
+        <button onClick={handlePrevClick} className="p-2 text-white bg-gray-800 hover:bg-gray-700">
+          Prev
+        </button>
+        <button onClick={handleNextClick} className="p-2 text-white bg-gray-800 hover:bg-gray-700">
+          Next
+        </button>
+      </div>
+    </div>
+  );
+};
+
+
+
 export default function Home() {
   const [images, setImages] = useState(null);
-  const [color1, setColor1] = useState(generateHexCode());
-  const [color2, setColor2] = useState(generateHexCode());
-  const [color3, setColor3] = useState(generateHexCode());
-  const [color4, setColor4] = useState(generateHexCode());
-  const [color5, setColor5] = useState(generateHexCode());
+  const [colors, setColors] = useState(Array(5).fill(null).map(generateHexCode));
+
+  const handleColorChange = (index, newColor) => {
+    setColors((prevColors) => {
+      const newColors = [...prevColors];
+      newColors[index] = newColor;
+      return newColors;
+    });
+  };
 
   function generateHexCode() {
     const hexChars = '0123456789ABCDEF';
@@ -54,56 +120,27 @@ export default function Home() {
     return hex;
   }
   
-  async function generateRandomPalette() {
-    // setColor1(generateHexCode());
-    // setColor2(generateHexCode());
-    // setColor3(generateHexCode());
-    // setColor4(generateHexCode());
-    // setColor5(generateHexCode());
-
-    // rand number between 2 and 5
-    let numColors = Math.floor(Math.random() * 4) + 2;
-
-    // I hate this code
-    if (numColors == 5) {
-      setColor1(generateHexCode())
-      setColor2(generateHexCode());
-      setColor3(generateHexCode());
-      setColor4(generateHexCode());
-      setColor5(generateHexCode());
-    } else if (numColors == 4) {
-      setColor1(generateHexCode())
-      setColor2(generateHexCode());
-      setColor3(generateHexCode());
-      setColor4(generateHexCode());
-      setColor5(null);
-    } else if (numColors == 3) {
-      setColor1(generateHexCode())
-      setColor2(generateHexCode());
-      setColor3(generateHexCode());
-      setColor4(null);
-      setColor5(null);
-    } else if (numColors == 2) {
-      setColor1(generateHexCode())
-      setColor2(generateHexCode());
-      setColor3(null);
-      setColor4(null);
-      setColor5(null);
+  const generateRandomPalette = () => {
+    const numColors = Math.floor(Math.random() * 4) + 2;
+    const newColors = Array(5).fill(null);
+  
+    for (let i = 0; i < numColors; i++) {
+      newColors[i] = generateHexCode();
     }
-    
-    fetchPalette();
+  
+    setColors(newColors);
 
-    // console.log(`${color1}-${color2}-${color3}-${color4}-${color5}`)
-  }
+    fetchPalette();
+  };
 
   async function fetchPalette() {
     // const res = await fetch("/api/palette?hex=374121-5d4538-477e92-c0b69e-163a60");
-    let url = `/api/palette?hex=${color1}-${color2}-${color3}-${color4}-${color5}`
+    let url = `/api/palette?hex=${colors[1]}-${colors[2]}-${colors[3]}-${colors[4]}-${colors[5]}`
         url = url.replaceAll('#', '')
+        console.log(url)
     const res = await fetch(url);
-    // const res = await fetch(`/api/palette?hex=${color1}-${color2}-${color3}-${color4}-${color5}`);
     const data = await res.json();
-    // console.log(data)
+    console.log(data)
     setImages(data);
   }
 
@@ -122,28 +159,33 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
+      <main className="flex flex-col justify-between h-screen bg-white">
+        
+        {images 
+          ? <ImageCarousel images={images} />
+          : <></>
+        }
+          
 
-        {/* <button onClick={fetchPalette}>fetch</button> */}
-        <div style={{display: "flex"}}>
-          <div style={{backgroundColor: color1, padding: "10px"}}>color1</div>
-          <div style={{backgroundColor: color2, padding: "10px"}}>color2</div>
-          <div style={{backgroundColor: color3, padding: "10px"}}>color3</div>
-          <div style={{backgroundColor: color4, padding: "10px"}}>color4</div>
-          <div style={{backgroundColor: color5, padding: "10px"}}>color5</div>
-        </div>
+        <div>
 
-        <button onClick={generateRandomPalette}>random palette</button>
-        <button onClick={fetchPalette}>fetch new images</button>
-      
-        <div style={{display: "flex", width: '100vw', justifyContent: 'space-between'}}>
-          {/* <HexColorPicker style={{width: '120px'}} color={color1} onChange={setColor1} /> */}
-          <ColorPicker color={color1} onChange={setColor1} />
-          <HexColorPicker style={{width: '120px'}} color={color2} onChange={setColor2} />
-          <HexColorPicker style={{width: '120px'}} color={color3} onChange={setColor3} />
-          <HexColorPicker style={{width: '120px'}} color={color4} onChange={setColor4} />
-          <HexColorPicker style={{width: '120px'}} color={color5} onChange={setColor5} />
-        </div>
+          <div className='flex justify-center gap-4'>
+            <button className='bg-rose-500' onClick={generateRandomPalette}>random palette</button>
+            <button className='bg-rose-500' onClick={fetchPalette}>fetch new images</button>
+          </div>
+
+          <div className='flex justify-between w-full'>
+            {colors.map((color, index) => (
+              <ColorPicker 
+                key={index} 
+                index={index} 
+                color={color} 
+                onColorChange={handleColorChange} 
+              />
+            ))}
+          </div>
+
+          </div>
       
       </main>
     </>

@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import { HexColorPicker } from "react-colorful";
 // import ColorPicker from '../components/ColorPicker';
 
-const ColorPicker = ({ index, color, onColorChange }) => {
+const ColorPicker = ({ index, color, onColorChange, generateHexCode }) => {
   const [showPicker, setShowPicker] = useState(false);
 
   const handleColorChange = (newColor) => {
@@ -14,29 +14,37 @@ const ColorPicker = ({ index, color, onColorChange }) => {
 
   return (
     <div className="relative w-1/5">
-      <div
-        className="relative h-[150px] bg-gray-300 cursor-pointer"
-        style={{ backgroundColor: color }}
-        onMouseEnter={() => setShowPicker(true)}
-        onMouseLeave={() => setShowPicker(false)}
-      >
-        {(showPicker && color) && (
-          <div className="absolute z-10 w-full">
-            {/* <div style={{ position: 'absolute', top: '100%', left: 0 }}> */}
-            {index != 0 ? (
-              <button 
-              className='absolute w-full -translate-y-6 align-center'
-              onClick={() => handleColorChange(null)}
-              >delete</button>
-            ) : null}
-              <HexColorPicker 
-                style={{width: 'auto', height: '150px'}}
-                // className='absolute z-10'
-                color={color} onChange={handleColorChange} />
-            {/* </div> */}
-          </div>
-        )}
-      </div>
+      {color 
+        ?  <div
+              className="relative h-[150px] bg-gray-300 cursor-pointer"
+              style={{ backgroundColor: color }}
+              onMouseEnter={() => setShowPicker(true)}
+              onMouseLeave={() => setShowPicker(false)}
+            >
+              {showPicker && (
+                <div className="absolute z-10 w-full">
+                  {index != 0 ? (
+                    <button 
+                    className='absolute w-full -translate-y-6 align-center'
+                    onClick={() => handleColorChange(null)}
+                    >delete</button>
+                  ) : null}
+                    <HexColorPicker 
+                      style={{width: 'auto', height: '150px'}}
+                      // className='absolute z-10'
+                      color={color} onChange={handleColorChange} />
+                </div>
+              )}
+            </div>
+        : <button 
+            style={{ backgroundColor: color }}
+            className='w-full h-full'
+            onClick={(c) => handleColorChange(generateHexCode())}
+          >
+          +
+          </button>
+
+      }
     </div>
   );
 };
@@ -159,7 +167,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex flex-col justify-between h-screen bg-white">
+      <main className="flex flex-col h-screen bg-white">
         
         {images 
           ? <ImageCarousel images={images} />
@@ -167,7 +175,7 @@ export default function Home() {
         }
           
 
-        <div>
+        <div className='flex flex-col justify-between bg-red-600 h-1/5'>
 
           <div className='flex justify-center gap-4'>
             <button className='bg-rose-500' onClick={generateRandomPalette}>random palette</button>
@@ -180,12 +188,13 @@ export default function Home() {
                 key={index} 
                 index={index} 
                 color={color} 
-                onColorChange={handleColorChange} 
+                onColorChange={handleColorChange}
+                generateHexCode={generateHexCode}
               />
             ))}
           </div>
 
-          </div>
+        </div>
       
       </main>
     </>
