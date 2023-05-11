@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '@/styles/Home.module.css'
-// import fetchPalette from './api/palette'
 import React, { useState, useEffect } from "react";
+import { HexColorPicker } from "react-colorful";
 
 
 export default function Home() {
@@ -21,8 +21,9 @@ export default function Home() {
     for (let i = 0; i < 6; i++) {
       hex += hexChars[Math.floor(Math.random() * 16)];
     }
-  
-    return hex.toLowerCase();
+    
+    hex = "#" + hex.toLowerCase()
+    return hex;
   }
   
   async function generateRandomPalette() {
@@ -64,14 +65,17 @@ export default function Home() {
     
     fetchPalette();
 
-    console.log(`${color1}-${color2}-${color3}-${color4}-${color5}`)
+    // console.log(`${color1}-${color2}-${color3}-${color4}-${color5}`)
   }
 
   async function fetchPalette() {
     // const res = await fetch("/api/palette?hex=374121-5d4538-477e92-c0b69e-163a60");
-    const res = await fetch(`/api/palette?hex=${color1}-${color2}-${color3}-${color4}-${color5}`);
+    let url = `/api/palette?hex=${color1}-${color2}-${color3}-${color4}-${color5}`
+        url = url.replaceAll('#', '')
+    const res = await fetch(url);
+    // const res = await fetch(`/api/palette?hex=${color1}-${color2}-${color3}-${color4}-${color5}`);
     const data = await res.json();
-    // console.log(data)
+    console.log(data)
     setImages(data);
   }
 
@@ -94,16 +98,23 @@ export default function Home() {
 
         {/* <button onClick={fetchPalette}>fetch</button> */}
         <div style={{display: "flex"}}>
-          <div style={{backgroundColor: "#"+color1, padding: "10px"}}>color1</div>
-          <div style={{backgroundColor: "#"+color2, padding: "10px"}}>color2</div>
-          <div style={{backgroundColor: "#"+color3, padding: "10px"}}>color3</div>
-          <div style={{backgroundColor: "#"+color4, padding: "10px"}}>color4</div>
-          <div style={{backgroundColor: "#"+color5, padding: "10px"}}>color5</div>
+          <div style={{backgroundColor: color1, padding: "10px"}}>color1</div>
+          <div style={{backgroundColor: color2, padding: "10px"}}>color2</div>
+          <div style={{backgroundColor: color3, padding: "10px"}}>color3</div>
+          <div style={{backgroundColor: color4, padding: "10px"}}>color4</div>
+          <div style={{backgroundColor: color5, padding: "10px"}}>color5</div>
         </div>
 
         <button onClick={generateRandomPalette}>random palette</button>
+        <button onClick={fetchPalette}>fetch new images</button>
       
-      
+        <div style={{display: "flex", width: '100vw', justifyContent: 'space-between'}}>
+          <HexColorPicker style={{width: '120px'}} color={color1} onChange={setColor1} />
+          <HexColorPicker style={{width: '120px'}} color={color2} onChange={setColor2} />
+          <HexColorPicker style={{width: '120px'}} color={color3} onChange={setColor3} />
+          <HexColorPicker style={{width: '120px'}} color={color4} onChange={setColor4} />
+          <HexColorPicker style={{width: '120px'}} color={color5} onChange={setColor5} />
+        </div>
       
       </main>
     </>
