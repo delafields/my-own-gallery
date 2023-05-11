@@ -63,31 +63,25 @@ const ImageCarousel = ({ images }) => {
   const handleNextClick = () => {
     setCurrentImageIndex(nextImageIndex);
   };
-
+  // picture frame: https://codepen.io/chris22smith/pen/PbBwjp
   return (
-    <div className="relative w-full h-full">
-      <div className="relative flex items-center justify-center w-full h-full">
-        {/* <Image
-          src={images[currentImageIndex].url}
-          alt="image"
-          layout='fill'
-          objectFit='contain'
-          // className="transition-opacity duration-500"
-          className={`transition-opacity duration-500 ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
-        /> */}
+    <div className="relative flex justify-center w-full h-full">
+      <div className="relative w-11/12 mt-4 h-5/6">
         {images.map((image, index) => (
-          <Image
-            key={index}
-            src={image.url}
-            alt="image"
-            layout="fill"
-            objectFit="contain"
-            className={`absolute top-0 left-0 transition-opacity duration-500 ${
-              index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-            }`}
-          />
+            <Image
+              key={index}
+              src={image.url}
+              alt="image"
+              layout="fill"
+              objectFit="contain"
+              className={`absolute drop-shadow-md top-0 left-0 transition-opacity duration-500 ${
+                index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+
         ))}
       </div>
+
       <div className="absolute top-0 left-0 flex items-center justify-between w-full h-full">
         <button onClick={handlePrevClick} className="p-2 text-white bg-gray-800 hover:bg-gray-700">
           Prev
@@ -95,6 +89,13 @@ const ImageCarousel = ({ images }) => {
         <button onClick={handleNextClick} className="p-2 text-white bg-gray-800 hover:bg-gray-700">
           Next
         </button>
+      </div>
+
+      <div 
+        className='absolute bottom-0 flex items-center justify-center w-64 h-24 p-4 bg-amber-50 right-10 drop-shadow-md'
+        style={{background: '#FFFBEBff&noise=626262&density=8&opacity=9', backgroundUrl: 'http://api.thumbr.it/whitenoise-361x370.png?'}}
+      >
+        <p className='font-bold text-black'>{images[currentImageIndex].title}</p>
       </div>
     </div>
   );
