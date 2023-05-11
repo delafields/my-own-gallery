@@ -1,11 +1,10 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '@/styles/Home.module.css'
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { HexColorPicker } from "react-colorful";
-// import ColorPicker from '../components/ColorPicker';
 
-const ColorPicker = ({ index, color, onColorChange }) => {
+const ColorPicker = ({ index, color, onColorChange, generateHexCode }) => {
   const [showPicker, setShowPicker] = useState(false);
 
   const handleColorChange = (newColor) => {
@@ -14,29 +13,36 @@ const ColorPicker = ({ index, color, onColorChange }) => {
 
   return (
     <div className="relative w-1/5">
-      <div
-        className="relative h-[150px] bg-gray-300 cursor-pointer"
-        style={{ backgroundColor: color }}
-        onMouseEnter={() => setShowPicker(true)}
-        onMouseLeave={() => setShowPicker(false)}
-      >
-        {(showPicker && color) && (
-          <div className="absolute z-10 w-full">
-            {/* <div style={{ position: 'absolute', top: '100%', left: 0 }}> */}
-            {index != 0 ? (
-              <button 
-              className='absolute w-full -translate-y-6 align-center'
-              onClick={() => handleColorChange(null)}
-              >delete</button>
-            ) : null}
-              <HexColorPicker 
-                style={{width: 'auto', height: '150px'}}
-                // className='absolute z-10'
-                color={color} onChange={handleColorChange} />
-            {/* </div> */}
-          </div>
-        )}
-      </div>
+      {color 
+        ?  <div
+              className="relative h-[150px] bg-gray-300 cursor-pointer"
+              style={{ backgroundColor: color }}
+              onMouseEnter={() => setShowPicker(true)}
+              onMouseLeave={() => setShowPicker(false)}
+            >
+              {showPicker && (
+                <div className="absolute z-10 w-full">
+                  {index != 0 ? (
+                    <button 
+                    className='absolute w-full -translate-y-6 align-center'
+                    onClick={() => handleColorChange(null)}
+                    >🗑️</button>
+                  ) : null}
+                    <HexColorPicker 
+                      style={{width: 'auto', height: '140px'}}
+                      color={color} onChange={handleColorChange} />
+                </div>
+              )}
+            </div>
+        : <button 
+            style={{ backgroundColor: color }}
+            className='w-full h-full text-3xl font-extrabold text-black border-l-2'
+            onClick={(c) => handleColorChange(generateHexCode())}
+          >
+          +
+          </button>
+
+      }
     </div>
   );
 };
@@ -48,47 +54,59 @@ const ImageCarousel = ({ images }) => {
   const prevImageIndex = currentImageIndex === 0 ? images.length - 1 : currentImageIndex - 1;
   const nextImageIndex = currentImageIndex === images.length - 1 ? 0 : currentImageIndex + 1;
 
-  const handlePrevClick = () => {
+  const handlePrevClick = useCallback(() => {
     setCurrentImageIndex(prevImageIndex);
-  };
+  }, [prevImageIndex]);
 
-  const handleNextClick = () => {
+  const handleNextClick = useCallback(() => {
     setCurrentImageIndex(nextImageIndex);
-  };
+  }, [nextImageIndex]);
 
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.key === 'ArrowLeft') {
+        handlePrevClick();
+      } else if (e.key === 'ArrowRight') {
+        handleNextClick();
+      }
+    },
+    [handlePrevClick, handleNextClick]
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
+  
+  // picture frame: https://codepen.io/chris22smith/pen/PbBwjp
   return (
-    <div className="relative w-full h-full">
-      <div className="relative flex items-center justify-center w-full h-full">
-        {/* <Image
-          src={images[currentImageIndex].url}
-          alt="image"
-          layout='fill'
-          objectFit='contain'
-          // className="transition-opacity duration-500"
-          className={`transition-opacity duration-500 ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
-        /> */}
+    <>
+      <div className="relative w-11/12 mt-4 h-5/6">
         {images.map((image, index) => (
-          <Image
-            key={index}
-            src={image.url}
-            alt="image"
-            layout="fill"
-            objectFit="contain"
-            className={`absolute top-0 left-0 transition-opacity duration-500 ${
-              index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-            }`}
-          />
+            <Image
+              key={index}
+              src={image.url}
+              alt="image"
+              layout="fill"
+              objectFit="contain"
+              className={`absolute drop-shadow-lg top-0 left-0 transition-opacity duration-500 ${
+                index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+
         ))}
       </div>
-      <div className="absolute top-0 left-0 flex items-center justify-between w-full h-full">
-        <button onClick={handlePrevClick} className="p-2 text-white bg-gray-800 hover:bg-gray-700">
-          Prev
-        </button>
-        <button onClick={handleNextClick} className="p-2 text-white bg-gray-800 hover:bg-gray-700">
-          Next
-        </button>
-      </div>
-    </div>
+
+      {images[currentImageIndex].title
+        ? <div className='absolute bottom-0 flex items-center justify-center w-64 h-24 p-4 bg-amber-100 bg-fuzz right-10 drop-shadow-md'>
+            <p className='font-bold text-black'>{images[currentImageIndex].title}</p>
+          </div>
+        : <></>
+      }
+
+      </>
   );
 };
 
@@ -137,9 +155,10 @@ export default function Home() {
     // const res = await fetch("/api/palette?hex=374121-5d4538-477e92-c0b69e-163a60");
     let url = `/api/palette?hex=${colors[1]}-${colors[2]}-${colors[3]}-${colors[4]}-${colors[5]}`
         url = url.replaceAll('#', '')
-        console.log(url)
+        
     const res = await fetch(url);
     const data = await res.json();
+
     console.log(data)
     setImages(data);
   }
@@ -159,19 +178,23 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex flex-col justify-between h-screen bg-white">
-        
-        {images 
-          ? <ImageCarousel images={images} />
-          : <></>
-        }
+      <main className="flex flex-col h-screen bg-white">
+
+        <div className="relative flex justify-center w-full h-full">
+          {images 
+            ? <ImageCarousel images={images} />
+            : <p>Loading....</p>
+          }
+        </div>
           
 
-        <div>
+        <div className='flex flex-col justify-between h-1/5'>
 
-          <div className='flex justify-center gap-4'>
-            <button className='bg-rose-500' onClick={generateRandomPalette}>random palette</button>
-            <button className='bg-rose-500' onClick={fetchPalette}>fetch new images</button>
+          <div className='flex items-center justify-center gap-4 mb-6 grow'>
+            {/* <button className='px-2 py-1 rounded-lg bg-slate-700' onClick={generateRandomPalette}>random palette</button>
+            <button className='px-2 py-1 rounded-lg bg-slate-700' onClick={fetchPalette}>fetch new images</button> */}
+            <button className='px-2 py-1 font-bold text-black rounded-lg' onClick={generateRandomPalette}>RANDOM</button>
+            <button className='px-2 py-1 font-bold text-black rounded-lg' onClick={fetchPalette}>NEW</button>
           </div>
 
           <div className='flex justify-between w-full'>
@@ -180,12 +203,13 @@ export default function Home() {
                 key={index} 
                 index={index} 
                 color={color} 
-                onColorChange={handleColorChange} 
+                onColorChange={handleColorChange}
+                generateHexCode={generateHexCode}
               />
             ))}
           </div>
 
-          </div>
+        </div>
       
       </main>
     </>
