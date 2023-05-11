@@ -27,7 +27,7 @@ const ColorPicker = ({ index, color, onColorChange, generateHexCode }) => {
                     <button 
                     className='absolute w-full -translate-y-6 align-center'
                     onClick={() => handleColorChange(null)}
-                    >delete</button>
+                    >🗑️</button>
                   ) : null}
                     <HexColorPicker 
                       style={{width: 'auto', height: '150px'}}
@@ -175,11 +175,11 @@ export default function Home() {
         }
           
 
-        <div className='flex flex-col justify-between bg-red-600 h-1/5'>
+        <div className='flex flex-col justify-between h-1/5'>
 
-          <div className='flex justify-center gap-4'>
-            <button className='bg-rose-500' onClick={generateRandomPalette}>random palette</button>
-            <button className='bg-rose-500' onClick={fetchPalette}>fetch new images</button>
+          <div className='flex items-center justify-center gap-4 grow'>
+            <button className='px-2 py-1 rounded-lg bg-slate-700' onClick={generateRandomPalette}>random palette</button>
+            <button className='px-2 py-1 rounded-lg bg-slate-700' onClick={fetchPalette}>fetch new images</button>
           </div>
 
           <div className='flex justify-between w-full'>
