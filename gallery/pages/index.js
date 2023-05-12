@@ -91,7 +91,7 @@ const ImageCarousel = ({ images }) => {
               alt="image"
               layout="fill"
               objectFit="contain"
-              className={`absolute drop-shadow-lg top-0 left-0 transition-opacity duration-500 ${
+              className={`absolute drop-shadow-[0_3px_10px_rgb(0,0,0,0.2)] top-0 left-0 transition-opacity duration-500 ${
                 index === currentImageIndex ? 'opacity-100' : 'opacity-0'
               }`}
             />
@@ -100,7 +100,7 @@ const ImageCarousel = ({ images }) => {
       </div>
 
       {images[currentImageIndex].title
-        ? <div className='absolute bottom-0 flex items-center justify-center w-64 h-24 p-4 mb-10 bg-amber-100 bg-fuzz right-10 drop-shadow-md'>
+        ? <div className='absolute bottom-0 flex items-center justify-center w-64 h-24 p-4 mb-10 bg-white right-10 drop-shadow-md'>
             <p className='font-bold text-black'>{images[currentImageIndex].title}</p>
           </div>
         : <></>
@@ -178,7 +178,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex flex-col h-screen bg-white">
+      <main className="flex flex-col h-screen bg-amber-50 bg-fuzz">
 
         <div className="relative flex justify-center w-full h-full">
           {images 
@@ -193,7 +193,7 @@ export default function Home() {
             <button className='px-2 py-1 font-bold text-black rounded-lg' onClick={fetchPalette}>NEW</button>
           </div> */}
 
-          <div className='flex w-full drop-shadow-[0_-8px_8px_rgba(0,0,0,0.2)]'>
+          <div className='flex w-full drop-shadow-[0_-3px_3px_rgba(0,0,0,0.1)]'>
             
             {colors.map((color, index) => (
               <ColorPicker 
@@ -205,9 +205,9 @@ export default function Home() {
               />
             ))}
             
-            <div className='flex flex-col justify-center h-full gap-4 border-l-2 grow'>
-              <button className='px-2 py-1 font-bold text-black rounded-lg hover:text-slate-600' onClick={generateRandomPalette}>RANDOM</button>
-              <button className='px-2 py-1 font-bold text-black rounded-lg hover:text-slate-600' onClick={fetchPalette}>FETCH</button>
+            <div className='flex flex-col justify-center h-full gap-4 bg-black border-b-2 border-l-2 border-r-2 grow'>
+              <button className='px-2 py-1 font-bold text-white rounded-lg hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r from-amber-200 to-yellow-400' onClick={generateRandomPalette}>RANDOM</button>
+              <button className='px-2 py-1 font-bold text-white rounded-lg hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r from-amber-200 to-yellow-400' onClick={fetchPalette}>FETCH</button>
             </div>
 
           </div>
