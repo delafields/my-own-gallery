@@ -1,6 +1,6 @@
 import Head from 'next/head'
-import Image from 'next/image'
-import styles from '@/styles/Home.module.css'
+// import Image from 'next/image'
+import Image from "next/legacy/image";
 import React, { useState, useEffect, useCallback } from "react";
 import { HexColorPicker } from "react-colorful";
 
@@ -155,12 +155,13 @@ export default function Home() {
     // const res = await fetch("/api/palette?hex=374121-5d4538-477e92-c0b69e-163a60");
     let url = `/api/palette?hex=${colors[1]}-${colors[2]}-${colors[3]}-${colors[4]}-${colors[5]}`
         url = url.replaceAll('#', '')
-        
+    
+    console.log('fetching new palette')
     const res = await fetch(url);
     const data = await res.json();
 
-    console.log(data)
     setImages(data);
+    console.log('received and set new images')
   }
 
   useEffect(() => {

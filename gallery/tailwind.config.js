@@ -11,7 +11,7 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'fuzz': "url(/fuzz.png)",
+        'fuzz': "url(/fuzz.png)"
       },
     },
   },

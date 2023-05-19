@@ -92,7 +92,8 @@ export default async function fetchPalette (req, res) {
         // grab a larger version of the image
             url = url.replace(/=w(\d)+/, '=w1000')
         // console.log(img);
-        const title = await els[i].$eval('a.more-details', a => a.getAttribute('title'));
+        let title = await els[i].$eval('a.more-details', a => a.getAttribute('title'));
+              title = title.replace(/<\/?i>/g, '')
         // console.log(link);
 
         images.push({"title": title, "url": url})
