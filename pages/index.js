@@ -154,7 +154,7 @@ export default function Home() {
   async function fetchPalette() {
     // const res = await fetch("/api/palette?hex=374121-5d4538-477e92-c0b69e-163a60");
     let url = `/api/palette?hex=${colors[1]}-${colors[2]}-${colors[3]}-${colors[4]}-${colors[5]}`
-        url = url.replaceAll('#', '').replaceAll('-undefined', '').replaceAll('-null', '')
+        url = url.replaceAll('#', '')
     
     console.log('fetching new palette')
     const res = await fetch(url);
