@@ -154,7 +154,7 @@ export default function Home() {
   async function fetchPalette() {
     // const res = await fetch("/api/palette?hex=374121-5d4538-477e92-c0b69e-163a60");
     let url = `/api/palette?hex=${colors[1]}-${colors[2]}-${colors[3]}-${colors[4]}-${colors[5]}`
-        url = url.replaceAll('#', '')
+        url = url.replaceAll('#', '').replaceAll('-undefined', '').replaceAll('-null', '')
     
     console.log('fetching new palette')
     const res = await fetch(url);
@@ -187,12 +187,6 @@ export default function Home() {
             : <p>Loading....</p>
           }
         </div>
-          
-
-          {/* <div className='flex items-center justify-center gap-4 mb-6 grow'>
-            <button className='px-2 py-1 font-bold text-black rounded-lg' onClick={generateRandomPalette}>RANDOM</button>
-            <button className='px-2 py-1 font-bold text-black rounded-lg' onClick={fetchPalette}>NEW</button>
-          </div> */}
 
           <div className='flex w-full drop-shadow-[0_-3px_3px_rgba(0,0,0,0.1)]'>
             
