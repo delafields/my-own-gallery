@@ -1,4 +1,4 @@
-import edgeChromium from 'chrome-aws-lambda'
+// import edgeChromium from 'chrome-aws-lambda'
 
 // Importing Puppeteer core as default otherwise
 // it won't function correctly with "launch()"
