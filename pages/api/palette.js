@@ -11,21 +11,21 @@ export default async function fetchPalette (req, res) {
     // will replace all null hexcodes
     hex = hex.replaceAll('-undefined', '').replaceAll('-null', '')
 
-    const options = process.env.AWS_REGION
-    ? {
-        args: chrome.args,
-        executablePath: await chrome.executablePath,
-        headless: chrome.headless
-        }
-    : {
-        args: [],
-        executablePath:
-            process.platform === 'win32'
-            ? 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
-            : process.platform === 'linux'
-            ? '/usr/bin/google-chrome'
-            : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-        };
+    // const options = process.env.AWS_REGION
+    // ? {
+    //     args: chrome.args,
+    //     executablePath: await chrome.executablePath,
+    //     headless: chrome.headless
+    //     }
+    // : {
+    //     args: [],
+    //     executablePath:
+    //         process.platform === 'win32'
+    //         ? 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+    //         : process.platform === 'linux'
+    //         ? '/usr/bin/google-chrome'
+    //         : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    //     };
 
     // const browser = await puppeteer.launch(options);
 
